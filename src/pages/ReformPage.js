@@ -17,7 +17,7 @@ class ReformPage extends react.Component {
             endY: 0,
             file: null,
             request_sent: false,
-            imageUrl: '',
+            imageUrl: this.props.URL,
             filename: '',
             public: false,
             responseURL: null,
@@ -25,7 +25,6 @@ class ReformPage extends react.Component {
         }
     }
 
-    reformParams = {}
 
     onChangePrompt = (state_value) => {
         this.setState({prompt: state_value})
@@ -46,47 +45,29 @@ class ReformPage extends react.Component {
         })
     }
 
-    base64ToBlob = (base64String) => {
-        const byteCharacters = atob(base64String);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        return new Blob([byteArray], { type: 'image/jpeg' });
-    };
-
     sendRequest = async () => {
         let url = 'http://localhost:8000/api/file/improve_file?prompt=' + this.state.prompt + '&anti_prompt=' + this.state.antiprompt
-        // let url = 'http://localhost:8000/api/file/random?prompt=' + this.state.prompt + '&anti_prompt=' + this.state.antiprompt
         const data = new FormData();
         data.append('uploaded_file', this.state.file);
         data.append('coordinates', [this.state.startX, this.state.startY, this.state.endX - this.state.startX, this.state.endY - this.state.startX]);
 
         console.log(this.state.startX, this.state.startY, this.state.endX - this.state.startX, this.state.endY - this.state.startX)
         try {
-            // const response = await axios.post('http://localhost:8000/api/file/random')//, data, {headers: {'Content-Type': 'multipart/form-data'}}, {withCredentials: true});
-            // this.setState({request_sent: true})
-            // console.log(typeof(response.data))
-            // // data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/
-            // const blob = response.blob
-            // console.log(blob)
-            // // const blob = new Blob([response.data], { type: 'image/jpeg' });
-            // const url1 = URL.createObjectURL(blob);
-            // this.setState({response_data: url1})
+            // let url = 'http://localhost:8000/api/file/random'
 
             const response = await fetch(url, {
                 method: 'POST',
                 body: data,
                 credentials: 'include'
-            });
+            })
+            
+            const filename = response.headers.get('content-disposition').split('"')[1]
+            this.setState({responseFilename: filename});
 
-            const blob =  await response.blob()
-            const responseURL = window.URL.createObjectURL(blob)
-            this.setState({request_sent: true})
-            this.setState({responseURL: responseURL})
-            this.setState({responseFilename: response.headers['content-disposition'].split('"')[1]})
-
+            const blob =  await response.blob();
+            const responseURL = window.URL.createObjectURL(blob);
+            this.setState({request_sent: true});
+            this.setState({responseURL: responseURL});
         } catch (error) {
             console.error(error);
         }
@@ -107,7 +88,8 @@ class ReformPage extends react.Component {
         let url = 'http://localhost:8000/api/file/improve_file/post?filename=' + this.state.responseFilename + '&public=' + this.state.public
 
         try {
-            const response = await fetch.post(url, {
+            await fetch(url, {
+                method: 'POST',
                 credentials: 'include'
             });
         } catch (error) {
@@ -125,19 +107,23 @@ class ReformPage extends react.Component {
         return (
             <div>
                 <Header type="full"/>
-                {!this.state.request_sent && <main className="whiteBack">
+                {!this.state.request_sent && <main className="whiteBackMain">
                     <Prompts onChangePrompt={this.onChangePrompt} onChangeAntiprompt={this.onChangeAntiprompt}/>
                     <FileReform onChangeFile={this.onChangeFile} />
-                    <button id="reformButton" onClick={ async () => {
-                        await this.sendRequest()
-                    } }>REFORM</button>
+                    <div className="buttons">
+                        <button id="reformButton" onClick={ async () => {
+                            await this.sendRequest()
+                        } }>REFORM</button>
+                    </div>
                 </main>}
-                {this.state.request_sent && <main className="whiteBack">
-                    {/* <b>{this.state.responseURL}</b> */}
-                    <img id="image" src={this.state.responseURL}/>
-                    <button id="reformButton" onClick={this.saveImage}>Download</button>
-                    <button id="reformButton" onClick={this.publishImage}>Publish</button>
-                    <Switch onChange={this.onChangeSwitch}/>
+                {this.state.request_sent && <main className="whiteBackMain">
+                        <img id="image" src={this.state.responseURL} alt="Response file"/>
+                    <div className="buttons">
+
+                        <button id="reformButton" onClick={this.saveImage}>Download</button>
+                        <button id="reformButton" onClick={this.publishImage}>Publish</button>
+                        <Switch onChange={this.onChangeSwitch}/>
+                    </div>
                 </main>}
             </div>
         )

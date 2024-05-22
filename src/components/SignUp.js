@@ -1,14 +1,14 @@
 import react from "react"
-import axios from "axios"
 import { Navigate } from "react-router-dom"
 
-class LogIn extends react.Component {
+class SignUp extends react.Component {
     constructor(props) {
         super(props)
 
         this.state = {
             email: "",
             password: "",
+            nickname: "",
             redirect: false
         }
     }
@@ -17,20 +17,15 @@ class LogIn extends react.Component {
 
     sendRequest = async (formData) => {
         try {
-            const requestData = new URLSearchParams();
-            requestData.append('username', formData.email);
-            requestData.append('password', formData.password);
-
-            const response = await fetch('http://localhost:8001/api/auth/login', {
+            console.log(JSON.stringify(formData))
+            const response = await fetch('http://localhost:8001/api/auth/register', {
                 method: 'POST',
-                body: requestData,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                credentials: 'include'
+                body: JSON.stringify(formData),
+                headers: { "Content-Type": "application/json" }
             })
 
-            if(response.status === 204) {
-                this.setState({redirect: true})
-            }
+            this.setState({redirect: true})
+        
         } catch (error) {
         console.error(error);
         }
@@ -39,21 +34,22 @@ class LogIn extends react.Component {
     render() {return (
         <form className="login" ref={(el) => this.logInForm = el}>
             <input name="email" placeholder="email" onChange={(e) => this.setState({email: e.target.value})}/>
+            <input name="nickname" placeholder="nickname" onChange={(e) => this.setState({nickname: e.target.value})}/>
             <input name="password" placeholder="password" onChange={(e) => this.setState({password: e.target.value})}/>
             <button type="button" onClick={ async () => 
                 {
-                    this.logInForm.reset()
+                    // this.logInForm.reset()
                     this.userAdd = {
                         email: this.state.email,
                         password: this.state.password,
+                        nickname: this.state.nickname,
                     }
 
                     await this.sendRequest(this.userAdd)
                 } 
-            }>{this.state.redirect && <Navigate to="/"/>}Log In</button>
-            <p>Don't have account?</p> <a href='/signup'>Sign Up</a>
+            }>{this.state.redirect && <Navigate to="/login"/>}Sign Up</button>
         </form>
     )}
 }
 
-export default LogIn
+export default SignUp

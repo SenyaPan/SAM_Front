@@ -6,9 +6,9 @@ class Images extends react.Component {
     render() {
         if(this.props.images.length > 0)
             return (
-                <div>
+                <div className="images">
                     {this.props.images.map((el) => (
-                        <Image key={el.id} user={el}/>
+                        <Image key={el.id} image={el}/>
                     ))}
                 </div>
             )

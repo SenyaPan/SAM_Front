@@ -18,13 +18,26 @@ class PrivatePage extends react.Component {
         let imageUrl = "http://localhost:8000/api/file/images/private" 
 
 
-        try {
-            const response = axios.get(imageUrl, {withCredentials: true})
-            if(response.data)
-                this.setState({images: response.data})
-        }catch (error) {
-            console.error(error);
-        }
+        // try {
+        //     const response = axios.get(imageUrl, {withCredentials: true})
+        //     if(response.data)
+        //         this.setState({images: response.data})
+        // }catch (error) {
+        //     console.error(error);
+        // }
+        fetch(imageUrl,{
+            credentials: 'include'
+        }).then(async response => {
+            if (response.status === 200) {
+                this.setState({images: await response.json()});
+                this.setState({auth: true})
+            };
+            if (response.status === 401) {
+                this.setState({auth: false})
+            }
+        }).catch((error) => {
+            // this.setState({auth: false})
+        })
     }
 
 

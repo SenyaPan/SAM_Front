@@ -47,6 +47,8 @@ class FileReform extends Component {
         ctx.strokeStyle = 'red';
         ctx.stroke();
 
+        console.log(this.state.startX, this.state.endY)
+
         this.props.onChangeFile([
             this.state.startX,
             this.state.startY,
@@ -56,6 +58,7 @@ class FileReform extends Component {
             this.state.file,
             this.state.ratio
         ])
+        console.log("pfff")
     };
 
     handleDrop = (e) => {
@@ -106,7 +109,9 @@ class FileReform extends Component {
             const img = new Image();
             img.onload = () => {
                 const windowInnerHeight = window.innerHeight;
-                const temp = img.width / img.height
+                const temp = img.width / img.height;
+                const ratio = img.height / (windowInnerHeight*0.5)
+                this.setState({ratio: ratio})
                 canvas.width = temp * windowInnerHeight*0.5
                 canvas.height = windowInnerHeight*0.5
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -126,7 +131,7 @@ class FileReform extends Component {
                 <canvas
                     ref={this.canvasRef}
                     width="500px"
-                    height="450px"
+                    height="350px"
                     onMouseDown={this.startDrawing}
                     onMouseMove={this.continueDrawing}
                     onMouseUp={this.stopDrawing}

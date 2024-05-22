@@ -1,5 +1,5 @@
 import react from "react"
-import { NavLink, Navigate, redirect } from "react-router-dom";
+import { NavLink, Navigate } from "react-router-dom";
 import { FaRegUserCircle } from "react-icons/fa";
 
 
@@ -9,11 +9,11 @@ class Header extends react.Component {
     }
 
     logOut = async() => {
-        const response = await fetch('http://localhost:8001/api/auth/logout', {
+        await fetch('http://localhost:8001/api/auth/logout', {
                 method: 'POST',
                 credentials: 'include'
             })
-        this.setState({redirect: true})
+        this.setState({redirectLogIn: true})
     }
 
     render() {

@@ -7,6 +7,8 @@ import FavouritesPage from "./pages/FavouritesPage"
 import PrivatePage from "./pages/PrivatePage"
 import ReformPage from "./pages/ReformPage"
 import MyPage from "./pages/MyPage"
+import ImagePage from "./pages/ImagePage"
+import SignUpPage from "./pages/SignUpPage"
 
 
 class App extends react.Component {
@@ -23,11 +25,13 @@ class App extends react.Component {
       <div>
         <Router>
           <Routes>
+            <Route path="/signup" element={<SignUpPage />} />
             <Route path="/login" element={<LogInPage />} />
             <Route path='/me' element={<MyPage />} />
             <Route path="/favourites" element={<FavouritesPage name="Favourites"/>} />
             <Route path="/private" element={<PrivatePage name="Private"/>} />
-            <Route path="/reform" element={<ReformPage name="Private"/>} />
+            <Route path="/reform" element={<ReformPage />} />
+            <Route path="/image/:id" element={<ImagePage />} />
             <Route path="/" element={<GalleryPage name="Gallery"/>} />
           </Routes>
         </Router>

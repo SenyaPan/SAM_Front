@@ -11,12 +11,8 @@ class FavouritesPage extends react.Component {
                 <Header type="full"/>
                 <main>
                     <PageName text="Favourites" />
-                    <Content />
-                    {/* <Users users={this.state.users} onEdit={this.editUser} onDelete={this.deleteUser}/> */}
+                    <Content type='favourites'/>
                 </main>
-                <aside>
-                    {/* <AddUser onAdd={this.addUser}/> */}
-                </aside>
             </div>
         )
     }
